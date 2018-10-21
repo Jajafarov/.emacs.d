@@ -1,0 +1,511 @@
+* Terminal
+** Setting default terminal
+Run Bash automatically when using ansi-term
+Super + Enter launches ansi-term
+#+BEGIN_SRC emacs-lisp
+  (defvar my-term-shell "/bin/bash")
+  (defadvice ansi-term (before force-bash)
+    (interactive (list my-term-shell)))
+  (ad-activate 'ansi-term)
+  (global-set-key (kbd "<H-return>") 'ansi-term)
+#+END_SRC
+* Utility packages
+** Which-key
+Shows the whole command tree after you enter a command
+#+BEGIN_SRC emacs-lisp 
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :init
+  (which-key-mode))
+#+END_SRC
+** Beacon
+Lights up the cursor when moving between windows
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :diminish beacon-mode
+  :init
+  (beacon-mode 1))
+#+END_SRC
+** Swiper, Ivy, Counsel and Avy
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :ensure t
+    :diminish counsel-mode
+    :init
+    (counsel-mode 1))
+
+  (use-package ivy
+    :ensure t
+    :diminish ivy-mode)
+
+  (use-package swiper
+    :ensure t
+    :config
+    (progn
+      (ivy-mode 1)
+      (setq enable-recursive-minibuffers t)
+      (global-set-key "\C-s" 'swiper)
+      (global-set-key (kbd "C-c C-r") 'ivy-resume)
+      (global-set-key (kbd "<f6>") 'ivy-resume)
+      (global-set-key (kbd "M-x") 'counsel-M-x)
+      (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+      (global-set-key (kbd "<f1> l") 'counsel-find-library)
+      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+      (global-set-key (kbd "C-c g") 'counsel-git)
+      (global-set-key (kbd "C-c j") 'counsel-git-grep)
+      (global-set-key (kbd "C-c k") 'counsel-ag)
+      (global-set-key (kbd "C-c a") 'counsel-apropos)
+      (global-set-key (kbd "C-x l") 'counsel-locate)
+      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+      (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+      (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+      (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+      (setq ivy-extra-directories nil)
+      ))
+
+  (use-package avy
+    :ensure t
+    :bind (("C-ö" . 'avy-goto-char)
+	   ("C-ä" . 'avy-goto-char-2)
+	   ("C-å" . 'avy-goto-line)))
+#+END_SRC
+** Free-keys
+M-x free-keys checks what shortcuts are unmapped in current buffer modes.
+#+BEGIN_SRC emacs-lisp
+(use-package free-keys
+  :ensure t)
+#+END_SRC
+** Expand-region
+"C-." expands the region you're in. Can start typing to replace the region. If you expand too far "-" contracts it.
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :ensure t
+  :bind ("C-." . er/expand-region))
+#+END_SRC
+** Comment-dwim-2
+"C-," is bound to the comment key. Used to comment and decomment a line.
+#+BEGIN_SRC emacs-lisp
+(use-package comment-dwim-2
+  :ensure t
+  :config
+  :bind ("C-," . comment-dwim-2))
+#+END_SRC
+** Neotree
+"F8" is bound to Neotree. A filesystem and project viewer.
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+  :ensure t
+  :config
+  (setq neo-smart-open t)
+  (setq neo-theme (if (display-graphic-p) 'icons))
+  :bind ([f8] . neotree-toggle))
+#+END_SRC
+
+** Config edit and reload
+#+BEGIN_SRC emacs-lisp
+  (defun config-visit ()
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
+  (global-set-key (kbd "C-c e") 'config-visit)
+
+  (defun config-reload ()
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
+  (global-set-key (kbd "C-c r") 'config-reload)
+#+END_SRC
+** Ace-window and window splitting function
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :bind ("M-o" . ace-window))
+
+  (setq aw-keys '(?a ?s ?d ?f ?h ?j ?k ?l))
+
+  (defun split-and-follow-horizontally ()
+    (interactive)
+    (split-window-below)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "C-x 2") 'split-and-follow-horizontally)
+
+  (defun split-and-follow-vertically ()
+    (interactive)
+    (split-window-right)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "C-x 3") 'split-and-follow-vertically)
+#+END_SRC
+** Electric pairs
+#+BEGIN_SRC emacs-lisp
+  (setq electric-pair-pairs '(
+			      (?\( . ?\))
+			      (?\{ . ?\})
+			      (?\[ . ?\])
+			      (?\" . ?\")
+			      ))
+  (electric-pair-mode t)
+#+END_SRC
+** Copy-whole-line
+#+BEGIN_SRC emacs-lisp
+  (defun copy-whole-line ()
+    (interactive)
+    (save-excursion
+      (kill-new
+       (buffer-substring
+	(point-at-bol)
+	(point-at-eol)))))
+  (global-set-key (kbd "C-c w l") 'copy-whole-line)
+#+END_SRC
+** Yasnippet and yasnippet-snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t)
+
+  (use-package yasnippet-snippets
+    :ensure t)
+#+END_SRC
+** Speed-type
+#+BEGIN_SRC emacs-lisp
+  (use-package speed-type
+    :ensure t)
+#+END_SRC
+** Sensitive data minor mode
+#+BEGIN_SRC emacs-lisp
+  (define-minor-mode sensitive-minor-mode
+    "For sensitive files like password lists.
+  It disables backup creation and auto saving.
+
+  With no argument, this command toggles the mode.
+  Non-null prefix argument turns on the mode.
+  Null prefix argument turns off the mode."
+    ;; The initial value.
+    nil
+    ;; The indicator for the mode line.
+    " Sensitive"
+    ;; The minor mode bindings.
+    nil
+    (if (symbol-value sensitive-mode)
+	(progn
+	  ;; disable backups
+	  (set (make-local-variable 'backup-inhibited) t)	
+	  ;; disable auto-save
+	  (if auto-save-default
+	      (auto-save-mode -1)))
+      ;resort to default value of backup-inhibited
+      (kill-local-variable 'backup-inhibited)
+      ;resort to default auto save setting
+      (if auto-save-default
+	  (auto-save-mode 1))))
+
+  (setq auto-mode-alist
+	(append
+	 (list
+	  '("\\.\\(vcf\\|gpg\\)$" . sensitive-minor-mode)
+	  )
+	 auto-mode-alist))
+#+END_SRC
+** Info+
+#+BEGIN_SRC emacs-lisp
+  (use-package info+
+    :load-path "~/emacs.d/lisp/")
+  ;;(eval-after-load "info" '(require 'info+))
+#+END_SRC
+* Major modes and IDE-style packages
+** Haskell-mode
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :ensure t)
+#+END_SRC
+** Python packages
+#+BEGIN_SRC emacs-lisp
+  (use-package virtualenvwrapper
+    :ensure t
+    :config
+    (setq venv-location "~/.virtualenvs")
+    (add-hook 'python-mode-hook 'venv-initialize-interactive-shells)
+    (add-hook 'python-mode-hook 'venv-initialize-eshell))
+
+  (use-package flycheck
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'flycheck-mode))
+
+  (use-package py-autopep8
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
+
+  ;; (use-package jedi
+  ;;   :ensure t
+  ;;   :bind
+  ;;   (("H-." . jedi:goto-definition)
+  ;;    ("H-," . jedi:goto-definition-pop-marker)
+  ;;    ("H-d" . jedi:show-doc))
+  ;;   :config
+  ;;   (add-hook 'python-mode 'jedi:setup)
+  ;;   (setq jedi:complete-on-dot t))
+#+END_SRC
+** Dumb-jump
+#+BEGIN_SRC emacs-lisp
+  (use-package dumb-jump
+    :ensure t
+    ;;:hook ()
+    :bind
+    (("H-g g" . dumb-jump-go)
+     ("H-g b" . dunb-jump-back)
+     ("H-g q" . dumb-jump-quick-look)
+     ("H-g p" . dumb-jump-go-prompt)
+     ("H-g o" . dumb-jump-go-other-window))
+    :config
+    (setq dumb-jump-selector 'ivy))
+#+END_SRC
+* Org packages
+** Org-bullets
+Makes org bullet points look better
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :diminish org-bullets-mode
+    :commands org-bullets-mode
+    :config (setq org-bullets-bullet-list '("α"
+					    "β"
+					    "γ"
+					    "δ"
+					    "ε"
+					    "ζ"
+					    "η"
+					    "θ"
+					    "ι"
+					    "κ"
+					    "λ"
+					    "μ"
+					    "ν"
+					    "ξ"
+					    "ο"
+					    "π"
+					    "ρ"
+					    "σ"
+					    "τ"
+					    "υ"
+					    "φ"
+					    "χ"
+					    "ψ"
+					    "ω"))
+    :hook (org-mode . org-bullets-mode))
+#+END_SRC
+** Org-pomodoro
+Pomodoro tracker in org
+#+BEGIN_SRC emacs-lisp
+(use-package org-pomodoro
+  :ensure t)
+#+END_SRC
+
+* UI
+** Themes
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package kaolin-themes
+  ;; ;; :config
+  ;; ;; (load-theme 'kaolin-ocean t)
+  ;;  :init
+  ;;  (setq kaolin-themes-hl-line-colored t))
+
+  (use-package planet-theme
+    :ensure t
+    :config (load-theme 'planet t)
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line nil :overline line)
+      (set-face-attribute 'mode-line-inactive nil :overline line)
+      (set-face-attribute 'mode-line-inactive nil :underline line)
+      (set-face-attribute 'mode-line nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :background "#090c10")))
+
+  ;; (use-package exotica-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'exotica t))
+
+  ;; (use-package gotham-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'gotham t))
+
+  ;; (use-package flatland-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'flatland t))
+
+  ;; (use-package snazzy-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'snazzy t))
+
+  ;; (use-package clues-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'clues t))
+#+END_SRC
+** Highlight-numbers
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-numbers
+  :ensure t
+  :diminish highlight-numbers-mode
+  :hook (prog-mode . highlight-numbers-mode))
+#+END_SRC
+** Highlight-quoted
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-quoted
+  :ensure t
+  :diminish highlight-quoted-mode
+  :hook (prog-mode . highlight-quoted-mode))
+#+END_SRC
+** Rainbow-delimiters
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :diminish rainbow-delimiters-mode
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+END_SRC
+** Dashboard
+Emacs start-up screen
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (setq dashboard-banner-logo-title "")
+    (setq dashboard-startup-banner 4)
+    (setq dashboard-items '((recents . 5)
+			    (bookmarks . 5)
+			    (agenda . 5)
+			    (registers . 5)))
+    (dashboard-setup-startup-hook))
+#+END_SRC
+** Nlinum
+Show current line number and highlight it
+#+BEGIN_SRC emacs-lisp
+  (use-package nlinum
+    :ensure t
+    :config
+    (setq nlinum-highlight-current-line t)
+    :hook (prog-mode . nlinum-mode))
+
+  (use-package nlinum-hl
+    :ensure t)
+#+END_SRC
+** All-the-icons and its relatives
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t
+    :config
+    (setq all-the-icons-color-icons nil)
+    (setq all-the-icons-for-buffer t)
+    (setq spaceline-all-the-icons-icon-set-window-numbering 'solid)
+    (setq spaceline-all-the-icons-icon-set-eyebrowse-slot 'solid))
+
+  ;; (use-package all-the-icons-dired
+  ;;   :ensure t
+  ;;   :hook dired-mode)
+#+END_SRC
+** Moody
+#+BEGIN_SRC emacs-lisp
+  (use-package moody
+    :ensure t
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
+** Default fontsets and unicode font support
+#+BEGIN_SRC emacs-lisp
+  (set-fontset-font "fontset-default" 'iso-8859-3
+		    "Noto Mono")
+
+  (set-fontset-font "fontset-startup" nil "DejaVu Sans Mono"
+		    nil 'append)
+#+END_SRC
+** Diminish
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish
+    :ensure t
+    :diminish visual-line-mode
+    :diminish eldoc-mode
+    :diminish page-break-lines-mode)
+#+END_SRC
+** Rainbow-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode
+    :ensure t
+    :config
+    (rainbow-mode 1))
+#+END_SRC
+* Personal QoL settings
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (when window-system (global-hl-line-mode t))
+  (setq scroll-conservatively 100)
+  (set-face-attribute 'default nil :font "Monoid 9")
+  (set-face-attribute 'fixed-pitch-serif nil :family "Dina")
+  (set-face-bold 'org-level-1 nil)
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (show-paren-mode t)
+  (setq org-src-window-setup 'current-window)
+  (add-to-list 'org-structure-template-alist
+	       '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+  (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+  (setq org-hide-emphasis-markers t)
+  (setq ns-pop-up-frames nil)
+  (setq auto-image-file-mode nil)
+  (global-set-key (kbd "H-C-<left>") 'shrink-window-horizontally)
+  (global-set-key (kbd "H-C-<right>") 'enlarge-window-horizontally)
+  (global-set-key (kbd "H-C-<down>") 'shrink-window)
+  (global-set-key (kbd "H-C-<up>") 'enlarge-window)
+  (defvar --backup-directory "~/.saves/")
+  (if (not (file-exists-p --backup-directory))
+      (make-directory --backup-directory t))
+  (setq make-backup-file t
+	delete-old-versions t
+	delete-by-moving-to-trash t
+	backup-by-copying t
+	kept-old-versions 6
+	kept-new-versions 9
+	auto-save-interval 200
+	auto-save-timeout 20
+	auto-save-default t
+	version-control t
+	vc-make-backup-files t
+	backup-directory-alist `(("." . ,--backup-directory)))
+#+END_SRC
+* List of personal keybindings
+|-----------+---------------------------------------------|
+| Binding   | Effect                                      |
+|-----------+---------------------------------------------|
+| C-c e     | Go to config.org                            |
+| C-c r     | Reload config.org                           |
+| C-ö       | Go to word                                  |
+| C-ä       | Go to char                                  |
+| M-x       | Counsel-M-x                                 |
+| C-x C-f   | Counsel-find-files                          |
+| C-c a     | Counsel-apropos                             |
+| C-x b     | Counsel-buffers-list                        |
+| S-return  | Open ansi-term                              |
+| F8        | Toggle Neotree                              |
+| M-o       | Ace-window                                  |
+| C-.       | Expand region                               |
+| C-,       | Comment a line                              |
+| C-c w l   | Copy whole line                             |
+| H-g g     | Dumb jump go                                |
+| H-g b     | Dumb jump back                              |
+| H-g q     | Dumb jump quick look                        |
+| H-g p     | Dumb jump prompt                            |
+| H-g o     | Dumb jump other window                      |
+| H-C-arrow | Shrink or enlarge window in arrow direction |
+|-----------+---------------------------------------------|
+* Planned modifications
+** Config.org parser
+Make a script that parses this config.org file and makes a neat table of all the custom keybindings and what functions they call, similar to the list of keybinding in this file.
+** Personal modeline
+Look into different modeline packages, choose one and modify it to look the way I want it to.
+** Neotree icons
+Make Neotree icons looks cleaner similar to Doom.
