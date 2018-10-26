@@ -239,16 +239,6 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
     :ensure t
     :config
     (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
-
-  ;; (use-package jedi
-  ;;   :ensure t
-  ;;   :bind
-  ;;   (("H-." . jedi:goto-definition)
-  ;;    ("H-," . jedi:goto-definition-pop-marker)
-  ;;    ("H-d" . jedi:show-doc))
-  ;;   :config
-  ;;   (add-hook 'python-mode 'jedi:setup)
-  ;;   (setq jedi:complete-on-dot t))
 #+END_SRC
 ** Dumb-jump
 #+BEGIN_SRC emacs-lisp
@@ -264,7 +254,29 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
     :config
     (setq dumb-jump-selector 'ivy))
 #+END_SRC
-* Org packages
+* Org
+** Org settings
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files '("~/.gtd/inbox.org"
+			   "~/.gtd/pnt.org"
+			   "~/.gtd/tickler.org"))
+  ;; Inbox or in-basket
+  ;; Projects and tasks
+  ;; Tickler for reminders
+
+  (setq org-capture-templates '(("i" "Todo [inbox]" entry
+				(file+headline "~/.gtd/inbox.org" "Tasks")
+				"* TODO %i%?")
+				("t" "Tickler" entry
+				 (file+headline "~/.gtd/tickler.org" "Tickler")
+				 "* %i%? \n %U")))
+
+  (setq org-refile-targets '(("~/.gtd/pnt.org" :maxlevel . 3)
+			     ("~/.gtd/someday.org" :level . 1)
+			     ("~/.gtd/tickler.org" :maxlevel . 2)))
+
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+#+END_SRC
 ** Org-bullets
 Makes org bullet points look better
 #+BEGIN_SRC emacs-lisp
@@ -374,7 +386,7 @@ Emacs start-up screen
     :config
     (setq dashboard-banner-logo-title "")
     (setq dashboard-startup-banner 4)
-    (setq dashboard-items '((recents . 5)
+    (setq dashboard-items '((recents . 10)
 			    (bookmarks . 5)
 			    (agenda . 5)
 			    (registers . 5)))
@@ -398,9 +410,7 @@ Show current line number and highlight it
     :ensure t
     :config
     (setq all-the-icons-color-icons nil)
-    (setq all-the-icons-for-buffer t)
-    (setq spaceline-all-the-icons-icon-set-window-numbering 'solid)
-    (setq spaceline-all-the-icons-icon-set-eyebrowse-slot 'solid))
+    (setq all-the-icons-for-buffer t))
 
   ;; (use-package all-the-icons-dired
   ;;   :ensure t
@@ -420,8 +430,8 @@ Show current line number and highlight it
   (set-fontset-font "fontset-default" 'iso-8859-3
 		    "Noto Mono")
 
-  (set-fontset-font "fontset-startup" nil "DejaVu Sans Mono"
-		    nil 'append)
+  ;; (set-fontset-font "fontset-startup" nil "DejaVu Sans Mono"
+  ;; 		  nil 'append)
 #+END_SRC
 ** Diminish
 #+BEGIN_SRC emacs-lisp
@@ -455,7 +465,7 @@ Show current line number and highlight it
 	       '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
   (setq org-hide-emphasis-markers t)
-  (setq ns-pop-up-frames nil)
+  (setq pop-up-frames nil)
   (setq auto-image-file-mode nil)
   (global-set-key (kbd "H-C-<left>") 'shrink-window-horizontally)
   (global-set-key (kbd "H-C-<right>") 'enlarge-window-horizontally)
