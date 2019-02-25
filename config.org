@@ -1,13 +1,20 @@
 * Terminal
 ** Setting default terminal
 Run Bash automatically when using ansi-term
-Super + Enter launches ansi-term
+Hyper + Enter launches ansi-term
 #+BEGIN_SRC emacs-lisp
   (defvar my-term-shell "/bin/bash")
   (defadvice ansi-term (before force-bash)
     (interactive (list my-term-shell)))
   (ad-activate 'ansi-term)
-  (global-set-key (kbd "<H-return>") 'ansi-term)
+  (global-set-key (kbd "<s-Shift-return>") 'ansi-term)
+#+END_SRC
+** Shell-toggle
+#+BEGIN_SRC emacs-lisp
+  (use-package shell-toggle
+    :ensure t
+    :load-path "~/emacs.d/lisp/"
+    :bind ("<s-return>" . shell-toggle))
 #+END_SRC
 * Utility packages
 ** Which-key
@@ -59,7 +66,7 @@ Lights up the cursor when moving between windows
       (global-set-key (kbd "C-c g") 'counsel-git)
       (global-set-key (kbd "C-c j") 'counsel-git-grep)
       (global-set-key (kbd "C-c k") 'counsel-ag)
-      (global-set-key (kbd "C-c a") 'counsel-apropos)
+      (global-set-key (kbd "C-c p") 'counsel-apropos)
       (global-set-key (kbd "C-x l") 'counsel-locate)
       (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
       (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
@@ -122,7 +129,7 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :ensure t
-    :bind ("M-o" . ace-window))
+    :bind ("C-x o" . ace-window))
 
   (setq aw-keys '(?a ?s ?d ?f ?h ?j ?k ?l))
 
@@ -215,6 +222,34 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
     :load-path "~/emacs.d/lisp/")
   ;;(eval-after-load "info" '(require 'info+))
 #+END_SRC
+** Eyebrowse
+#+BEGIN_SRC emacs-lisp
+  (use-package eyebrowse
+    :ensure t
+    :config
+    (eyebrowse-mode t))
+    ;; (add-hook 'delete-frame-functions 'eyebrowse-switch-to-window-config-0))
+#+END_SRC
+** PDF-tools
+#+BEGIN_SRC emacs-lisp
+;  (use-package pdf-tools
+;    :ensure t
+;    :config
+;    (pdf-tools-install)
+;    (setq-default pdf-view-display-size 'fit-page)
+;    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+#+END_SRC
+** Drag-stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package drag-stuff
+    :ensure t
+    :diminish
+    (drag-stuff-mode)
+    :init
+    (drag-stuff-mode t)
+    :config
+    (drag-stuff-define-keys))
+#+END_SRC
 * Major modes and IDE-style packages
 ** Haskell-mode
 #+BEGIN_SRC emacs-lisp
@@ -254,28 +289,54 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
     :config
     (setq dumb-jump-selector 'ivy))
 #+END_SRC
+** Fish-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package fish-mode
+    :ensure t)
+#+END_SRC
 * Org
 ** Org settings
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files '("~/.gtd/inbox.org"
-			   "~/.gtd/pnt.org"
-			   "~/.gtd/tickler.org"))
+  (setq org-log-done t)
+  (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\C-ca" 'org-agenda)
+
   ;; Inbox or in-basket
   ;; Projects and tasks
   ;; Tickler for reminders
 
   (setq org-capture-templates '(("i" "Todo [inbox]" entry
-				(file+headline "~/.gtd/inbox.org" "Tasks")
-				"* TODO %i%?")
+				 (file+headline "~/Dropbox/GTD/inbox.org" "Tasks")
+				 "* TODO %i%?")
 				("t" "Tickler" entry
-				 (file+headline "~/.gtd/tickler.org" "Tickler")
+				 (file+headline "~/Dropbox/GTD/tickler.org" "Tickler")
 				 "* %i%? \n %U")))
 
-  (setq org-refile-targets '(("~/.gtd/pnt.org" :maxlevel . 3)
-			     ("~/.gtd/someday.org" :level . 1)
-			     ("~/.gtd/tickler.org" :maxlevel . 2)))
+  (setq org-refile-targets '(("~/Dropbox/GTD/pnt.org" :maxlevel . 3)
+			     ("~/Dropbox/GTD/someday.org" :level . 1)
+			     ("~/Dropbox/GTD/tickler.org" :maxlevel . 2)))
 
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-todo-keywords '((sequence
+			     "ACTIVE(a)"
+			     "NEXT(n)"
+			     "TODO(t)"
+			     "WAITING(w)"
+			     "POSTPONED(p)"
+			     "SOMEDAY(s)"
+			     "REFERENCE(r)"
+			     "INACTIVE(i)"
+			     "MEETING(m)"
+			     "|"
+			     "DONE(d)"
+			     "CANCELLED(c)")))
+
+
+  (setq calendar-week-start-day 1)
+  (setq org-agenda-start-on-weekday 1)
+  (setq org-agenda-span 10)
+  (setq org-agenda-files (list "~/Dropbox/GTD"))
+  (set-face-italic 'org-level-4 nil)
+  (set-face-foreground 'org-level-4 "plum")
 #+END_SRC
 ** Org-bullets
 Makes org bullet points look better
@@ -317,6 +378,17 @@ Pomodoro tracker in org
   :ensure t)
 #+END_SRC
 
+** Org-alerts
+#+BEGIN_SRC emacs-lisp
+  (use-package org-alert
+    :ensure t
+    :init
+    (setq org-alert-enable t)
+    :config
+    (setq org-alert-notification-title "*Org*")
+    (setq org-alert-interval 3600)
+    (setq alert-default-style 'libnotify))
+#+END_SRC
 * UI
 ** Themes
 #+BEGIN_SRC emacs-lisp
@@ -356,6 +428,38 @@ Pomodoro tracker in org
   ;; (use-package clues-theme
   ;;   :ensure t
   ;;   :config (load-theme 'clues t))
+
+  (use-package base16-theme
+    :ensure t
+    :config (load-theme 'base16-wal t)
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line nil :overline line)
+      (set-face-attribute 'mode-line-inactive nil :overline line)
+      (set-face-attribute 'mode-line-inactive nil :underline line)
+      (set-face-attribute 'mode-line nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :background "#090c10")))
+
+  (defun refresh-theme ()
+    (progn
+      (load-theme 'base16-wal t)
+      (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line nil :overline line)
+      (set-face-attribute 'mode-line-inactive nil :overline line)
+      (set-face-attribute 'mode-line-inactive nil :underline line)
+      (set-face-attribute 'mode-line nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :background "#090c10"))))
+
+  (defun theme-callback (event)
+    (refresh-theme))
+
+  (require 'filenotify)
+  (file-notify-add-watch
+    "/home/jafarov/.emacs.d/base16-wal-theme.el" '(change) 'theme-callback)
+
+
+
 #+END_SRC
 ** Highlight-numbers
 #+BEGIN_SRC emacs-lisp
@@ -381,16 +485,17 @@ Pomodoro tracker in org
 ** Dashboard
 Emacs start-up screen
 #+BEGIN_SRC emacs-lisp
-  (use-package dashboard
-    :ensure t
-    :config
-    (setq dashboard-banner-logo-title "")
-    (setq dashboard-startup-banner 4)
-    (setq dashboard-items '((recents . 10)
-			    (bookmarks . 5)
-			    (agenda . 5)
-			    (registers . 5)))
-    (dashboard-setup-startup-hook))
+  ;; (use-package dashboard
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq dashboard-banner-logo-title "")
+  ;;   (setq dashboard-startup-banner 4)
+  ;;   (add-to-list 'dashboard-items '(agenda) t)
+  ;;   (setq dashboard-items '((recents . 10)
+  ;; 			  (bookmarks . 5)
+  ;; 			  (agenda . t)
+  ;; 			  (registers . 5)))
+  ;;   (dashboard-setup-startup-hook))
 #+END_SRC
 ** Nlinum
 Show current line number and highlight it
@@ -448,16 +553,26 @@ Show current line number and highlight it
     :config
     (rainbow-mode 1))
 #+END_SRC
+** Emojify
+#+BEGIN_SRC emacs-lisp
+  (use-package emojify
+    :ensure t)
+#+END_SRC
 * Personal QoL settings
 #+BEGIN_SRC emacs-lisp
+  (server-start)
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
+  (tooltip-mode -1)
+  (desktop-save-mode 1)
+  (setq tooltip-use-echo-area t)
   (when window-system (global-hl-line-mode t))
   (setq scroll-conservatively 100)
-  (set-face-attribute 'default nil :font "Monoid 9")
+  (set-face-attribute 'default nil :font "Cherry 13")
   (set-face-attribute 'fixed-pitch-serif nil :family "Dina")
   (set-face-bold 'org-level-1 nil)
+  (set-face-bold 'org-level-3 nil)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (show-paren-mode t)
   (setq org-src-window-setup 'current-window)
@@ -466,11 +581,14 @@ Show current line number and highlight it
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
   (setq org-hide-emphasis-markers t)
   (setq pop-up-frames nil)
+  (setq ns-pop-up-frames nil)
   (setq auto-image-file-mode nil)
   (global-set-key (kbd "H-C-<left>") 'shrink-window-horizontally)
   (global-set-key (kbd "H-C-<right>") 'enlarge-window-horizontally)
   (global-set-key (kbd "H-C-<down>") 'shrink-window)
   (global-set-key (kbd "H-C-<up>") 'enlarge-window)
+  (global-set-key (kbd "H-p") 'backward-paragraph)
+  (global-set-key (kbd "H-n") 'forward-paragraph)
   (defvar --backup-directory "~/.saves/")
   (if (not (file-exists-p --backup-directory))
       (make-directory --backup-directory t))
@@ -486,6 +604,10 @@ Show current line number and highlight it
 	version-control t
 	vc-make-backup-files t
 	backup-directory-alist `(("." . ,--backup-directory)))
+
+  (recentf-mode 1)
+  (setq recentf-max-menu-items 25)
+  (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 #+END_SRC
 * List of personal keybindings
 |-----------+---------------------------------------------|
@@ -501,7 +623,7 @@ Show current line number and highlight it
 | C-x b     | Counsel-buffers-list                        |
 | S-return  | Open ansi-term                              |
 | F8        | Toggle Neotree                              |
-| M-o       | Ace-window                                  |
+| H-o       | Ace-window                                  |
 | C-.       | Expand region                               |
 | C-,       | Comment a line                              |
 | C-c w l   | Copy whole line                             |
@@ -511,6 +633,7 @@ Show current line number and highlight it
 | H-g p     | Dumb jump prompt                            |
 | H-g o     | Dumb jump other window                      |
 | H-C-arrow | Shrink or enlarge window in arrow direction |
+| H-p/n     | Paragraph backward/forward                  |
 |-----------+---------------------------------------------|
 * Planned modifications
 ** Config.org parser
@@ -519,3 +642,9 @@ Make a script that parses this config.org file and makes a neat table of all the
 Look into different modeline packages, choose one and modify it to look the way I want it to.
 ** Neotree icons
 Make Neotree icons looks cleaner similar to Doom.
+** Change Org tables to use Menlo box drawing characters
+** Org-alert with Dunst
+** Magit, magithub
+** Projectile
+** Ialign
+** Python-pytest
