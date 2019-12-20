@@ -348,8 +348,6 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
   (cl-defmethod project-roots ((project (head dart)))
     (list (cdr project)))
 
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-
   (use-package eglot
     :ensure t
     :config
@@ -375,16 +373,16 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
   ;; Tickler for reminders
 
   (setq org-capture-templates '(("i" "Todo [inbox]" entry
-				 (file+headline "~/Dropbox/GTD/inbox.org" "Tasks")
+				 (file+headline "~/GTD/inbox.org" "Tasks")
 				 "* TODO %i%?")
 				("t" "Tickler" entry
-				 (file+headline "~/Dropbox/GTD/tickler.org" "Tickler")
+				 (file+headline "~/GTD/tickler.org" "Tickler")
 				 "* %i%? \n %U")))
 
-  (setq org-refile-targets '(("~/Dropbox/GTD/pnt.org" :maxlevel . 3)
-			     ("~/Dropbox/GTD/someday.org" :level . 1)
-			     ("~/Dropbox/GTD/tickler.org" :maxlevel . 2)
-			     ("~/Dropbox/GTD/archive.org" :level 1)))
+  (setq org-refile-targets '(("~/GTD/pnt.org" :maxlevel . 3)
+			     ("~/GTD/someday.org" :level . 1)
+			     ("~/GTD/tickler.org" :maxlevel . 2)
+			     ("~/GTD/archive.org" :level 1)))
 
   (setq org-todo-keywords '((sequence
 			     "ACTIVE(a)"
@@ -404,7 +402,7 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
   (setq calendar-week-start-day 1)
   (setq org-agenda-start-on-weekday 1)
   (setq org-agenda-span 10)
-  (setq org-agenda-files (list "~/Dropbox/GTD"))
+  (setq org-agenda-files (list "~/GTD"))
   (setq org-agenda-window-setup 'other-window) 
   ;; (setq org-agenda-sorting-strategy "timestamp-up")
   (set-face-italic 'org-level-4 nil)	;
