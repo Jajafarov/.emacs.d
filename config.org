@@ -9,6 +9,7 @@ Hyper + Enter launches ansi-term
   (ad-activate 'ansi-term)
   (global-set-key (kbd "<s-Shift-return>") 'ansi-term)
 #+END_SRC
+
 ** Shell-toggle
 #+BEGIN_SRC emacs-lisp
   (use-package shell-toggle
@@ -37,49 +38,49 @@ Lights up the cursor when moving between windows
 #+END_SRC
 ** Swiper, Ivy, Counsel and Avy
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :ensure t
-    :diminish counsel-mode
-    :init
-    (counsel-mode 1))
+      (use-package counsel
+	:ensure t
+	:diminish counsel-mode
+	:init
+	(counsel-mode 1))
 
-  (use-package ivy
-    :ensure t
-    :diminish ivy-mode)
+      (use-package ivy
+	:ensure t
+	:diminish ivy-mode)
 
-  (use-package swiper
-    :ensure t
-    :config
-    (progn
-      (ivy-mode 1)
-      (setq enable-recursive-minibuffers t)
-      (global-set-key "\C-s" 'swiper)
-      (global-set-key (kbd "C-c C-r") 'ivy-resume)
-      (global-set-key (kbd "<f6>") 'ivy-resume)
-      (global-set-key (kbd "M-x") 'counsel-M-x)
-      (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-      (global-set-key (kbd "<f1> l") 'counsel-find-library)
-      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-      (global-set-key (kbd "C-c g") 'counsel-git)
-      (global-set-key (kbd "C-c j") 'counsel-git-grep)
-      (global-set-key (kbd "C-c k") 'counsel-ag)
-      (global-set-key (kbd "C-c p") 'counsel-apropos)
-      (global-set-key (kbd "C-x l") 'counsel-locate)
-      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-      (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-      (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
-      (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
-      (setq ivy-extra-directories nil)
-      ))
+      (use-package swiper
+	:ensure t
+	:config
+	(progn
+	  (ivy-mode 1)
+	  (setq enable-recursive-minibuffers t)
+	  (global-set-key "\C-s" 'swiper)
+	  (global-set-key (kbd "C-c C-r") 'ivy-resume)
+	  (global-set-key (kbd "<f6>") 'ivy-resume)
+	  (global-set-key (kbd "M-x") 'counsel-M-x)
+	  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+	  (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+	  (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+	  (global-set-key (kbd "<f1> l") 'counsel-find-library)
+	  (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+	  (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+	  (global-set-key (kbd "C-c g") 'counsel-git)
+	  (global-set-key (kbd "C-c j") 'counsel-git-grep)
+	  (global-set-key (kbd "C-c k") 'counsel-ag)
+	  (global-set-key (kbd "C-c p") 'counsel-apropos)
+	  (global-set-key (kbd "C-x l") 'counsel-locate)
+	  (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+	  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+	  (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+	  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+	  (setq ivy-extra-directories nil)
+	  ))
 
-  (use-package avy
-    :ensure t
-    :bind (("C-ö" . 'avy-goto-char)
-	   ("C-ä" . 'avy-goto-char-2)
-	   ("C-å" . 'avy-goto-line)))
+      (use-package avy
+	:ensure t
+	:bind (("C-ö" . 'avy-goto-char)
+	       ("C-ä" . 'avy-goto-char-2)
+	       ("C-å" . 'avy-goto-line)))
 #+END_SRC
 ** Free-keys
 M-x free-keys checks what shortcuts are unmapped in current buffer modes.
@@ -171,7 +172,8 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
 ** Yasnippet and yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
-    :ensure t)
+    :ensure t
+    :config (yas-global-mode))
 
   (use-package yasnippet-snippets
     :ensure t)
@@ -230,15 +232,6 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
     (eyebrowse-mode t))
     ;; (add-hook 'delete-frame-functions 'eyebrowse-switch-to-window-config-0))
 #+END_SRC
-** PDF-tools
-#+BEGIN_SRC emacs-lisp
-;  (use-package pdf-tools
-;    :ensure t
-;    :config
-;    (pdf-tools-install)
-;    (setq-default pdf-view-display-size 'fit-page)
-;    (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-#+END_SRC
 ** Drag-stuff
 #+BEGIN_SRC emacs-lisp
   (use-package drag-stuff
@@ -271,11 +264,6 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
     :ensure t)
 #+END_SRC
 * Major modes and IDE-style packages
-** Haskell-mode
-#+BEGIN_SRC emacs-lisp
-(use-package haskell-mode
-  :ensure t)
-#+END_SRC
 ** RTags
 #+BEGIN_SRC emacs-lisp
   (use-package rtags
@@ -322,48 +310,46 @@ M-x free-keys checks what shortcuts are unmapped in current buffer modes.
   (use-package fish-mode
     :ensure t)
 #+END_SRC
-** Dart-mode
-#+BEGIN_SRC emacs-lisp
-  (use-package dart-mode
-    :ensure t)
-#+END_SRC
-** Flutter
-#+BEGIN_SRC emacs-lisp
-  (use-package flutter
-    :ensure t)
-#+END_SRC
 ** Company
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t)
 #+END_SRC
-** Eglot
+** C++ setup
 #+BEGIN_SRC emacs-lisp
-  ; Helps project.el find the root of the dart project
-
-  (defun project-try-dart (dir)
-    (let ((project (or (locate-dominating-file dir "pubspec.yaml")
-		       (locate-dominating-file dir "BUILD"))))
-      (if project
-	  (cons 'dart project)
-	(cons 'transient dir))))
-  (add-hook 'project-find-functions #'project-try-dart)
-  (cl-defmethod project-roots ((project (head dart)))
-    (list (cdr project)))
-
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-
-  (use-package eglot
+  (use-package lsp-mode
     :ensure t
-    :config
-    (add-hook 'dart-mode-hook 'eglot-ensure)
-    (add-to-list 'eglot-server-programs '(dart-mode . ("dart_language_server"))))
+    :hook ((lsp-mode . lsp-enable-which-key-integration))
+    :config (setq lsp-completion-enable-additional-text-edit nil))
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :ensure t)
+  (use-package lsp-ivy
+    :ensure t)
+  (use-package flycheck
+    :ensure t)
+  (use-package lsp-treemacs
+    :ensure t)
 
-  (use-package flymake
-    :ensure t
-    :bind
-    (("C-c C-v C-f" . flymake-goto-next-error)
-     ("C-c C-v C-b" . flymake-goto-prev-error)))
+  ;;; This will enable emacs to compile a simple cpp single file without any makefile by just pressing [f9] key
+  (defun code-compile()
+    (interactive)
+    (unless (file-exists-p "Makefile")
+      (set (make-local-variable 'compile-command)
+	   (let ((file (file-name-nondirectory buffer-file-name)))
+	     (format "%s -o %s %s"
+		     (if (equal (file-name-extension file) "cpp") "g++" "gcc")
+		     (file-name-sans-extension file)
+		     file)))
+      (compile compile-command)))
+  (global-set-key [f9] 'code-compile)
+
+  (setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024)
+      treemacs-space-between-root-nodes nil
+      company-idle-delay 0.0
+      company-minimum-prefix-length 1
+      lsp-idle-delay 0.1)  ;; clangd is fast
 #+END_SRC
 * Org
 ** Org settings
@@ -443,7 +429,6 @@ Pomodoro tracker in org
 (use-package org-pomodoro
   :ensure t)
 #+END_SRC
-
 ** Org-alerts
 #+BEGIN_SRC emacs-lisp
   (use-package org-alert
